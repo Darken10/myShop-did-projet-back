@@ -10,7 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Setter
+@Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,5 +36,9 @@ public class Promotion {
     @JsonIgnore
     private Set<Produit> produits = new HashSet<>();
 
+    public void addProduit(Produit produit) {
+        this.produits.add(produit);
+        produit.getPromotions().add(this);  // Assurer la bidirectionnalité
+    }
 
 }

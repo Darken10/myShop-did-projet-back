@@ -7,6 +7,7 @@ import com.did.MyShop.entities.Produit.Produit;
 import com.did.MyShop.mappers.Commande.PromotionMapper;
 import com.did.MyShop.repositories.commande.PromotionRepository;
 import com.did.MyShop.repositories.produit.ProduitRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +31,16 @@ public class PromotionService {
         return promotionRepository.findById(promId).orElseThrow(()->new RessourceNotFoundException("Promotion not found"));
     }
 
+
     public Promotion save(PromotionRequest request){
+        System.out.println(request);
         Promotion promotion = PromotionMapper.toPromotion(request);
         Set<Produit> produits = request.produitsId().stream().map(this::getProuit).collect(Collectors.toSet());
         promotion.setProduits(produits);
         promotion.setCreateDate(LocalDateTime.now());
+        request.produitsId()
+                .forEach(proId -> promotion.addProduit(produitRepository.findById(proId).orElseThrow(() -> new RessourceNotFoundException("Le produit n°"+proId+" associer a cet identifiant"))));
+        System.out.println(promotion.getProduits().stream().map(Produit::getLibelle).collect(Collectors.toSet()));
         return promotionRepository.save(promotion);
     }
 

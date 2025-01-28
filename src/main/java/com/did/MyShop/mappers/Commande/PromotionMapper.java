@@ -4,6 +4,8 @@ import com.did.MyShop.DTO.commande.PromotionRequest;
 import com.did.MyShop.DTO.commande.PromotionResponse;
 import com.did.MyShop.entities.Commande.Promotion;
 
+import java.util.HashSet;
+
 public class PromotionMapper {
 
     public static Promotion toPromotion (PromotionRequest request) {
@@ -14,8 +16,8 @@ public class PromotionMapper {
                 .reduction(request.reduction())
                 .isPercent(request.isPercent())
                 .endDate(request.endDate())
-                .createDate(request.createDate())
                 .startDate(request.startDate())
+                .produits(new HashSet<>())
                 .build();
 
     };
@@ -32,7 +34,6 @@ public class PromotionMapper {
                 promotion.getStartDate()
         );
     }
-
 
 
 }

@@ -2,6 +2,7 @@ package com.did.MyShop.mappers.prodiut;
 
 import com.did.MyShop.DTO.produit.ProduitRequest;
 import com.did.MyShop.DTO.produit.ProduitResponse;
+import com.did.MyShop.DTO.produit.ProduitResponseMini;
 import com.did.MyShop.entities.Produit.Category;
 import com.did.MyShop.entities.Produit.Produit;
 import com.did.MyShop.entities.Produit.Tag;
@@ -64,5 +65,16 @@ public class ProduitMapper {
         produit.setImage(produitRequest.image());
         produit.setCategory(getCategorie(produitRequest.categoryId()));
         produit.setTags(getTags(produitRequest.tagsId()));
+    }
+
+    public static ProduitResponseMini toProduitResponseMini(Produit produit) {
+        return new ProduitResponseMini(
+                produit.getId(),
+                produit.getLibelle(),
+                produit.getDescription(),
+                produit.getPrix(),
+                produit.getStock(),
+                produit.getUnite()
+        );
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/promostions")
+@RequestMapping("/promotions")
 @AllArgsConstructor
 public class PromotionController {
 
@@ -23,6 +23,7 @@ public class PromotionController {
     public List<PromotionResponse> findAll(){
         return promotionService.findAll().stream().map(PromotionMapper::toPromotionResponse).collect(Collectors.toList());
     }
+    
 
     @GetMapping("{promoId}")
     public PromotionResponse findOne(

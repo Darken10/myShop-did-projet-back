@@ -10,7 +10,6 @@ public record PromotionRequest(
         Boolean isPercent,
         LocalDateTime startDate,
         LocalDateTime endDate,
-        LocalDateTime createDate,
         Set<Long> produitsId
 ) {
 }

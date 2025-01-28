@@ -50,8 +50,5 @@ public class Produit {
         tag.getProduits().add(this);  // Assurer la bidirectionnalité
     }
 
-    public void addPromotion(Promotion promotion) {
-        this.promotions.add(promotion);
-        promotion.getProduits().add(this);  // Assurer la bidirectionnalité
-    }
+
 }

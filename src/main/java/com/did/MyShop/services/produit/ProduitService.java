@@ -2,6 +2,7 @@ package com.did.MyShop.services.produit;
 
 import com.did.MyShop.DTO.produit.ProduitRequest;
 import com.did.MyShop.DTO.produit.ProduitResponse;
+import com.did.MyShop.DTO.produit.ProduitResponseMini;
 import com.did.MyShop.Exceptions.RessourceNotFoundException;
 import com.did.MyShop.entities.Produit.Produit;
 import com.did.MyShop.entities.Produit.Tag;
@@ -78,5 +79,9 @@ public class ProduitService {
     private void isTagExist(Long id){
         System.out.println("isTagExist  : tag "+id );
         tagRepository.findById(id).orElseThrow(() -> new RessourceNotFoundException("Tag n°" + id + " introuvable"));
+    }
+
+    public List<ProduitResponseMini> getAllMini() {
+        return  produitRepository.findAll().stream().map(ProduitMapper::toProduitResponseMini).collect(Collectors.toList());
     }
 }

@@ -2,6 +2,7 @@ package com.did.MyShop.controllers.produit;
 
 import com.did.MyShop.DTO.produit.ProduitRequest;
 import com.did.MyShop.DTO.produit.ProduitResponse;
+import com.did.MyShop.DTO.produit.ProduitResponseMini;
 import com.did.MyShop.services.produit.ProduitService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,12 @@ public class ProduitController {
     @GetMapping
     public List<ProduitResponse> getAll() {
         return produitService.getAll();
+
+    }
+
+    @GetMapping("/mini")
+    public List<ProduitResponseMini> getAllMini() {
+        return produitService.getAllMini();
 
     }
 
