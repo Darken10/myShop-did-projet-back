@@ -4,6 +4,7 @@ import com.did.MyShop.DTO.commande.PaiementRequest;
 import com.did.MyShop.DTO.commande.PaiementResponse;
 import com.did.MyShop.mappers.Commande.PaiementMapper;
 import com.did.MyShop.services.commande.PaiementService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class PaiementController {
     }
 
     @PostMapping
-    public PaiementResponse create(@RequestBody PaiementRequest request) {
+    public PaiementResponse create(@Valid  @RequestBody PaiementRequest request) {
         return PaiementMapper.toPaiementResponse(paiementService.save(request));
     }
 }

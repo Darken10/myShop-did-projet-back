@@ -1,5 +1,7 @@
 package com.did.MyShop.entities.User;
 
+import com.did.MyShop.entities.Ravitaillement.Fournisseur;
+import com.did.MyShop.entities.Ravitaillement.Ravitaillement;
 import com.did.MyShop.enums.GenreUserEnum;
 import com.did.MyShop.enums.StatusUserEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,15 +35,21 @@ public class User implements UserDetails {
     private String phoneNumber;
     private String matricule;
     private String password;
-
     @Enumerated(EnumType.STRING)
     private StatusUserEnum status;
-
     @ManyToMany(mappedBy = "users",cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonIgnore
     private List<ResetPasswordJeton> resetPasswords;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Ravitaillement> ravitaillements;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Fournisseur> fournisseurs;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -32,12 +32,9 @@ public record ProduitRequest(
         @NotBlank(message = "La categorie est obligatoire")
         Long categoryId,
 
-        Set<Long> tagsId
+        Set<Long> tagsId,
 
+        String reference
 
-
-/*
-        Set<Long> promotionsId
-        */
 ) {
 }

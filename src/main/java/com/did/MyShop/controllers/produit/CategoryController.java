@@ -5,6 +5,7 @@ import com.did.MyShop.DTO.produit.CategorieResponse;
 import com.did.MyShop.entities.Produit.Category;
 import com.did.MyShop.mappers.prodiut.CategorieMapper;
 import com.did.MyShop.services.produit.CategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -32,14 +33,14 @@ public class CategoryController {
 
     @PostMapping
     public Category addCategory(
-            @RequestBody CategorieRequest categorieRequest
+            @Valid  @RequestBody CategorieRequest categorieRequest
     ){
        return categoryService.save(categorieRequest) ;
     }
 
     @PutMapping("/{id}")
     public Category updateCategory(
-            @RequestBody CategorieRequest categorieRequest,
+            @Valid @RequestBody CategorieRequest categorieRequest,
             @PathVariable Long id
     ){
         return categoryService.update(id,categorieRequest);

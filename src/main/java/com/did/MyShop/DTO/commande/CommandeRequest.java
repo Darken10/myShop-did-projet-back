@@ -12,6 +12,6 @@ public record CommandeRequest(
          Long clientId,
          String description,
          StatusCommandEnum status,
-        List<LigneCommandeRequest> ligneCommandes
+         List<LigneCommandeRequest> ligneCommandes
 ) {
 }

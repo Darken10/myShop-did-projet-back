@@ -4,6 +4,7 @@ import com.did.MyShop.DTO.produit.ProduitRequest;
 import com.did.MyShop.DTO.produit.ProduitResponse;
 import com.did.MyShop.DTO.produit.ProduitResponseMini;
 import com.did.MyShop.services.produit.ProduitService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -37,14 +38,14 @@ public class ProduitController {
 
     @PostMapping
     public ProduitResponse addProduit(
-            @RequestBody ProduitRequest produitRequest
+            @Valid  @RequestBody ProduitRequest produitRequest
     ){
        return produitService.save(produitRequest) ;
     }
 
     @PutMapping("/{id}")
     public ProduitResponse updateProduit(
-            @RequestBody ProduitRequest produitRequest,
+            @Valid @RequestBody ProduitRequest produitRequest,
             @PathVariable Long id
     ){
         return produitService.update(id, produitRequest);

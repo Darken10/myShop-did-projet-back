@@ -3,6 +3,7 @@ package com.did.MyShop.controllers.produit;
 import com.did.MyShop.DTO.produit.TagRequest;
 import com.did.MyShop.DTO.produit.TagResponse;
 import com.did.MyShop.services.produit.TagService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +31,14 @@ public class TagController {
 
     @PostMapping
     public TagResponse addCategory(
-            @RequestBody TagRequest categorieRequest
+            @Valid  @RequestBody TagRequest categorieRequest
     ){
        return tagService.save(categorieRequest);
     }
 
     @PutMapping("/{id}")
     public TagResponse updateCategory(
-            @RequestBody TagRequest categorieRequest,
+            @Valid @RequestBody TagRequest categorieRequest,
             @PathVariable Long id
     ){
         return tagService.update(id,categorieRequest);

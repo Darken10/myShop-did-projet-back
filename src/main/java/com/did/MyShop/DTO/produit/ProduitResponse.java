@@ -21,6 +21,7 @@ public record ProduitResponse(
         CategorieResponse category,
         Set<TagResponse> tags,
         Set<Promotion> promotions,
-        List<LigneRavitaillement> ligneRavitaillements
+        List<LigneRavitaillement> ligneRavitaillements,
+        String reference
 ) {
 }

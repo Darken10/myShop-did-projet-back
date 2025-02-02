@@ -1,12 +1,13 @@
 package com.did.MyShop.entities.Ravitaillement;
 
 import com.did.MyShop.entities.Produit.Produit;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
-@ToString
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -17,9 +18,12 @@ public class LigneRavitaillement {
     private Double quantite;
     @ManyToOne
     @JoinColumn(name = "ravitaillement_id")
+    @JsonIgnore
     private Ravitaillement ravitaillement;
     @ManyToOne
     @JoinColumn(name = "produit_id")
     private Produit produit;
+
+    private Double prixUnitaire;
 
 }

@@ -41,4 +41,9 @@ public class Promotion {
         produit.getPromotions().add(this);  // Assurer la bidirectionnalité
     }
 
+    public void removeProduit(Produit produit) {
+        this.produits.remove(produit);
+        produit.getPromotions().remove(this);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.did.MyShop.controllers.commande;
 
+import com.did.MyShop.DTO.commande.FullPromotion;
 import com.did.MyShop.DTO.commande.PromotionRequest;
 import com.did.MyShop.DTO.commande.PromotionResponse;
 import com.did.MyShop.entities.Commande.Promotion;
@@ -26,10 +27,20 @@ public class PromotionController {
     
 
     @GetMapping("{promoId}")
-    public PromotionResponse findOne(
+    public FullPromotion findOne(
             @PathVariable Long promoId){
-        return PromotionMapper.toPromotionResponse(promotionService.findById(promoId));
+        return PromotionMapper.toFullPromotionResponse(promotionService.findById(promoId));
     }
+
+    @GetMapping("{promoId}/retire/{prodId}")
+    public void retiter(
+            @PathVariable("promoId") Long promoId,
+            @PathVariable Long prodId
+    ){
+        promotionService.retirer(promoId,prodId);
+    }
+
+
 
     @PostMapping
     public PromotionResponse create(@Valid @RequestBody PromotionRequest request){

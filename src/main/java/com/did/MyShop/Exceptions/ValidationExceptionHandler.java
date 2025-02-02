@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ValidationExceptionHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    /*@ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         StringBuilder errors = new StringBuilder();
         var i=0;
@@ -26,7 +26,7 @@ public class ValidationExceptionHandler {
         response.put("message", errors.toString());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
+    }*/
 
 }
 

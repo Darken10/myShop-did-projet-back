@@ -9,6 +9,8 @@ public record ProduitResponseMini(
         String description,
         Double prix,
         Integer stock,
-        UniteProduitEnum unite
+        UniteProduitEnum unite,
+        String reference,
+        CategorieResponse category
 ) {
 }

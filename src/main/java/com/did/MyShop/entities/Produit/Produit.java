@@ -5,6 +5,7 @@ import com.did.MyShop.entities.Commande.Promotion;
 import com.did.MyShop.entities.Ravitaillement.LigneRavitaillement;
 import com.did.MyShop.entities.User.Role;
 import com.did.MyShop.enums.UniteProduitEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class Produit {
     private String description;
     private String image;
     private Double seuil;
+    private String reference;
     @Enumerated(EnumType.STRING)
     private UniteProduitEnum unite;
     @ManyToOne
@@ -34,14 +36,17 @@ public class Produit {
     private Category category;
 
     @ManyToMany(mappedBy = "produits",cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<Tag> tags = new HashSet<>();
 
     @ManyToMany(mappedBy = "produits",cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
     private Set<Promotion> promotions =  new HashSet<>();
     @OneToMany(mappedBy = "produit")
+    @JsonIgnore
     private List<LigneRavitaillement> ligneRavitaillements;
 
     @OneToMany(mappedBy = "produit")
+    @JsonIgnore
     private List<LigneCommande> ligneCommandes;
 
 

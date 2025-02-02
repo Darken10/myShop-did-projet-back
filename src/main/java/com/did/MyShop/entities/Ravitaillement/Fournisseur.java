@@ -1,14 +1,14 @@
 package com.did.MyShop.entities.Ravitaillement;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.did.MyShop.entities.User.User;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
-@Data
-@ToString
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -20,6 +20,12 @@ public class Fournisseur {
     private String address;
     private String phoneNumber;
     private String email;
+    @OneToMany(mappedBy = "fournisseur",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Ravitaillement> ravitaillements;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    private String description;
 
 
 }

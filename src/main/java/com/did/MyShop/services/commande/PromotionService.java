@@ -7,7 +7,6 @@ import com.did.MyShop.entities.Produit.Produit;
 import com.did.MyShop.mappers.Commande.PromotionMapper;
 import com.did.MyShop.repositories.commande.PromotionRepository;
 import com.did.MyShop.repositories.produit.ProduitRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,7 @@ public class PromotionService {
     public Promotion save(PromotionRequest request){
         System.out.println(request);
         Promotion promotion = PromotionMapper.toPromotion(request);
-        Set<Produit> produits = request.produitsId().stream().map(this::getProuit).collect(Collectors.toSet());
+        Set<Produit> produits = request.produitsId().stream().map(this::getProduit).collect(Collectors.toSet());
         promotion.setProduits(produits);
         promotion.setCreateDate(LocalDateTime.now());
         request.produitsId()
@@ -44,7 +43,18 @@ public class PromotionService {
         return promotionRepository.save(promotion);
     }
 
-    private Produit getProuit(long prodId){
+    private Produit getProduit(long prodId){
         return produitRepository.findById(prodId).orElseThrow(()->new RessourceNotFoundException("Produit not found"));
+    }
+
+
+    public void retirer(long promId,long prodId){
+        Promotion promotion = findById(promId);
+        Produit produit = getProduit(prodId);
+        if(!promotion.getProduits().contains(produit)){
+
+        promotion.removeProduit(produit);
+        }
+        promotionRepository.save(promotion);
     }
 }

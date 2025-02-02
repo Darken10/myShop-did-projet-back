@@ -32,8 +32,12 @@ public class PaiementService {
     @Transactional
     public Paiement save(PaiementRequest paiementRequest){
         Paiement paiement = PaiementMapper.toPaiement(paiementRequest);
-        log.info("save paiement {}", paiement);
+        paiement.setCommande(getCommande(paiementRequest.commandeId()));
         return paiementRepository.save(paiement);
+    }
+
+    private Commande getCommande(long id){
+        return commandeRepository.findById(id).orElseThrow(()->new RessourceNotFoundException("Commande n°"+id+" non trouve"));
     }
 
 

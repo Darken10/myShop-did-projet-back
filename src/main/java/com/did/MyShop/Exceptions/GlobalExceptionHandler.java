@@ -1,42 +1,121 @@
 package com.did.MyShop.Exceptions;
 
-import org.springframework.http.HttpStatus;
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.did.MyShop.Exceptions.ErrorCodes.*;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, Model model) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("message:", ex.getMessage());
-        errorMap.put("content:",null);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMap);
+    @ExceptionHandler(RessourceNotFoundException.class)
+    public ResponseEntity<ExeptionResponse> handleException(RessourceNotFoundException exp) {
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .body(
+                        ExeptionResponse
+                                .builder()
+                                .code(RESSOURCE_NOT_FOUND.getCode())
+                                .description(RESSOURCE_NOT_FOUND.getDescription())
+                                .error(exp.getMessage())
+                                .build()
+                );
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Object> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("message:", ex.getMessage());
-        errorMap.put("content:",null);
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorMap);
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ExeptionResponse> handleException(LockedException exp) {
+        return ResponseEntity
+                .status(UNAUTHORIZED)
+                .body(
+                        ExeptionResponse
+                                .builder()
+                                .code(ACCOUNT_LOCKED.getCode())
+                                .description(ACCOUNT_LOCKED.getDescription())
+                                .error(exp.getMessage())
+                                .build()
+                );
     }
 
-   /* @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<Object> handleExpiredJwtExceptionException(ExpiredJwtException ex) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("message:", ex.getMessage());
-        errorMap.put("content:",null);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
-    }*/
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ExeptionResponse> handleException(DisabledException exp) {
+        return ResponseEntity
+                .status(UNAUTHORIZED)
+                .body(
+                        ExeptionResponse
+                                .builder()
+                                .code(ACCOUNT_DISABLED.getCode())
+                                .description(ACCOUNT_DISABLED.getDescription())
+                                .error(exp.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ExeptionResponse> handleException(BadCredentialsException exp) {
+        return ResponseEntity
+                .status(UNAUTHORIZED)
+                .body(
+                        ExeptionResponse
+                                .builder()
+                                .code(BAD_CREDENTIAL.getCode())
+                                .description(BAD_CREDENTIAL.getDescription())
+                                .error(BAD_CREDENTIAL.getDescription())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ExeptionResponse> handleException(MessagingException exp) {
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .body(
+                        ExeptionResponse
+                                .builder()
+                                .error(exp.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExeptionResponse> handleException(MethodArgumentNotValidException exp) {
+
+        Set<String> errors = new HashSet<>();
+        exp.getBindingResult().getAllErrors().forEach((error) -> {
+            var errrMessage = error.getDefaultMessage();
+            errors.add(errrMessage);
+        });
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .body(
+                        ExeptionResponse
+                                .builder()
+                                .validationErrors(errors)
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExeptionResponse> handleException(Exception exp) {
+        exp.printStackTrace();
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .body(
+                        ExeptionResponse
+                                .builder()
+                                .description("Une erreur est survenue sur le serveur. Veuillez cotactez l'adminitrateur.")
+                                .error(exp.getMessage())
+                                .build()
+                );
+    }
 }
 
 

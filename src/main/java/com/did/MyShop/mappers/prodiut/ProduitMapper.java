@@ -1,5 +1,6 @@
 package com.did.MyShop.mappers.prodiut;
 
+import com.did.MyShop.DTO.produit.CategorieResponse;
 import com.did.MyShop.DTO.produit.ProduitRequest;
 import com.did.MyShop.DTO.produit.ProduitResponse;
 import com.did.MyShop.DTO.produit.ProduitResponseMini;
@@ -50,7 +51,8 @@ public class ProduitMapper {
                 CategorieMapper.toCategoriesResponse(produit.getCategory()),
                 produit.getTags().stream().map(TagMapper::toTagsResponse).collect(Collectors.toSet()),
                 produit.getPromotions(),
-                produit.getLigneRavitaillements()
+                produit.getLigneRavitaillements(),
+                produit.getReference()
         );
 
     }
@@ -65,6 +67,7 @@ public class ProduitMapper {
         produit.setImage(produitRequest.image());
         produit.setCategory(getCategorie(produitRequest.categoryId()));
         produit.setTags(getTags(produitRequest.tagsId()));
+        produit.setReference(produitRequest.reference());
     }
 
     public static ProduitResponseMini toProduitResponseMini(Produit produit) {
@@ -74,7 +77,9 @@ public class ProduitMapper {
                 produit.getDescription(),
                 produit.getPrix(),
                 produit.getStock(),
-                produit.getUnite()
+                produit.getUnite(),
+                produit.getReference(),
+                CategorieMapper.toCategoriesResponse(produit.getCategory())
         );
     }
 }
