@@ -28,9 +28,9 @@ public class Commande {
     @Enumerated(EnumType.STRING)
     private StatusCommandEnum status;
     private String description;
-    @OneToMany
+    @OneToMany(mappedBy = "commande",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<LigneCommande> ligneCommandes = new ArrayList<>();
-    @OneToMany
+    @OneToMany(mappedBy = "commande",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Paiement> paiements = new ArrayList<>();
     private LocalDateTime createAt;
 

@@ -1,9 +1,6 @@
 package com.did.MyShop.mappers.Commande;
 
-import com.did.MyShop.DTO.commande.CommandUnitaireRequest;
-import com.did.MyShop.DTO.commande.CommandeRequest;
-import com.did.MyShop.DTO.commande.CommandeResponse;
-import com.did.MyShop.DTO.commande.PaiementResponse;
+import com.did.MyShop.DTO.commande.*;
 import com.did.MyShop.entities.Commande.Client;
 import com.did.MyShop.entities.Commande.Commande;
 import com.did.MyShop.entities.Commande.LigneCommande;
@@ -33,9 +30,14 @@ public class CommandeMapper {
 
     public static CommandeResponse toCommandeResponse (Commande commande) {
         List<PaiementResponse> payement = new ArrayList<>();
+        List<LigneCommandeMini> ligneCommandes = new ArrayList<>();
         if (commande.getPaiements()!=null && !commande.getPaiements().isEmpty()) {
              payement = commande.getPaiements().stream().map((PaiementMapper::toPaiementResponse)).toList();
         }
+        if (commande.getLigneCommandes()!=null && !commande.getLigneCommandes().isEmpty()) {
+            ligneCommandes = commande.getLigneCommandes().stream().map(LigneCommandeMapper::toLigneCommandeMini).toList();
+        }
+
         return new CommandeResponse(
                 commande.getId(),
                 ClientMapper.toClientResponse(commande.getClient()),
@@ -43,7 +45,7 @@ public class CommandeMapper {
                 commande.getStatus(),
                 payement,
                 commande.getCreateAt(),
-                commande.getLigneCommandes().stream().map(LigneCommandeMapper::toLigneCommandeMini).toList()
+                ligneCommandes
         );
     }
 
