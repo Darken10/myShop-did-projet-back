@@ -42,7 +42,8 @@ public class CommandeMapper {
                 commande.getDescription(),
                 commande.getStatus(),
                 payement,
-                commande.getCreateAt()
+                commande.getCreateAt(),
+                commande.getLigneCommandes().stream().map(LigneCommandeMapper::toLigneCommandeMini).toList()
         );
     }
 

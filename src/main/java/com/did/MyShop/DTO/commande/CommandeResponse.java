@@ -11,6 +11,7 @@ public record CommandeResponse(
         String description,
         StatusCommandEnum status,
         List<PaiementResponse> paiements,
-        LocalDateTime createAt
+        LocalDateTime createAt,
+        List<LigneCommandeMini> ligneCommandes
 ) {
 }

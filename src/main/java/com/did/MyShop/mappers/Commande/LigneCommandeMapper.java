@@ -1,6 +1,7 @@
 package com.did.MyShop.mappers.Commande;
 
 
+import com.did.MyShop.DTO.commande.LigneCommandeMini;
 import com.did.MyShop.DTO.commande.LigneCommandeRequest;
 import com.did.MyShop.DTO.commande.LigneCommandeResponse;
 import com.did.MyShop.entities.Commande.LigneCommande;
@@ -27,6 +28,16 @@ public class LigneCommandeMapper {
 
         log.info("LigneCommandeMapper.toLigneCommandeResponse() : {}", ligneCommande.getProduit().getDescription());
         return new LigneCommandeResponse(
+                ligneCommande.getId(),
+                ligneCommande.getPrixUnitaire(),
+                ligneCommande.getQuantity(),
+                ProduitMapper.toProduitResponse(ligneCommande.getProduit())
+        );
+    }
+
+    public static LigneCommandeMini toLigneCommandeMini (LigneCommande ligneCommande) {
+
+        return new LigneCommandeMini(
                 ligneCommande.getId(),
                 ligneCommande.getPrixUnitaire(),
                 ligneCommande.getQuantity(),
