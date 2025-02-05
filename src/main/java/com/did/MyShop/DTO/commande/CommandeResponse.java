@@ -1,5 +1,6 @@
 package com.did.MyShop.DTO.commande;
 
+import com.did.MyShop.DTO.user.UserResponse;
 import com.did.MyShop.enums.StatusCommandEnum;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public record CommandeResponse(
         StatusCommandEnum status,
         List<PaiementResponse> paiements,
         LocalDateTime createAt,
-        List<LigneCommandeMini> ligneCommandes
+        List<LigneCommandeMini> ligneCommandes,
+        UserResponse user
 ) {
 }

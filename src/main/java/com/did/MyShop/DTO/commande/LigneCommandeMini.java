@@ -1,11 +1,12 @@
 package com.did.MyShop.DTO.commande;
 
-import com.did.MyShop.DTO.produit.ProduitResponse;
+import com.did.MyShop.DTO.produit.ProduitResponseMini;
 
 public record LigneCommandeMini(
         Long id,
         Double prixUnitaire,
         Double quantity,
-        ProduitResponse produit
+        PromotionResponse promotion,
+        ProduitResponseMini produit
 ) {
 }

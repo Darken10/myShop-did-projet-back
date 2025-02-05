@@ -41,7 +41,8 @@ public class LigneCommandeMapper {
                 ligneCommande.getId(),
                 ligneCommande.getPrixUnitaire(),
                 ligneCommande.getQuantity(),
-                ProduitMapper.toProduitResponse(ligneCommande.getProduit())
+                PromotionMapper.toPromotionResponse(ligneCommande.getPromotion()),
+                ProduitMapper.toProduitResponseMini(ligneCommande.getProduit())
         );
     }
 

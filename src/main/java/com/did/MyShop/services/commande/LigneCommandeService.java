@@ -13,8 +13,8 @@ import com.did.MyShop.mappers.Commande.LigneCommandeMapper;
 import com.did.MyShop.repositories.commande.ClientRepository;
 import com.did.MyShop.repositories.commande.CommandeRepository;
 import com.did.MyShop.repositories.commande.LigneCommandeRepository;
+import com.did.MyShop.repositories.commande.PromotionRepository;
 import com.did.MyShop.repositories.produit.ProduitRepository;
-import jakarta.persistence.Transient;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,7 @@ public class LigneCommandeService {
     private final CommandeRepository commandeRepository;
     private final ProduitRepository produitRepository;
     private final ClientRepository clientRepository;
+    private final PromotionRepository promotionRepository;
     LigneCommandeRepository ligneCommandeRepository;
 
     public List<LigneCommandeResponse> findAll(){
@@ -48,13 +49,20 @@ public class LigneCommandeService {
     }
 
     @Transactional
-    public LigneCommandeResponse create(LigneCommandeRequest commandeRequest,Long commandeId){
+    public LigneCommande create(LigneCommandeRequest commandeRequest,Long commandeId){
         LigneCommande ligneCommande = LigneCommandeMapper.toLigneCommande(commandeRequest);
+        Produit produit = getProduit(commandeRequest.produitId());
         ligneCommande.setCommande(getCommande(commandeId));
-        ligneCommande.setProduit(getProduit(commandeRequest.produitId()));
-        ligneCommande.setPromotion(Promotion.builder().id(1L).build());
+        ligneCommande.setProduit(produit);
+        if (commandeRequest.promotionsId()!= null){
+            ligneCommande.setPromotion(this.getPromotion(commandeRequest.promotionsId()));
+        } else {
+            ligneCommande.setPromotion(Promotion.builder().id(1L).isPercent(true).reduction(0D).build());
+        }
         ligneCommandeRepository.save(ligneCommande);
-        return LigneCommandeMapper.toLigneCommandeResponse(ligneCommande);
+        produit.setStock((int) (produit.getStock() - ligneCommande.getQuantity()));
+        produitRepository.save(produit);
+        return ligneCommande;
     }
 
 
@@ -64,10 +72,8 @@ public class LigneCommandeService {
         LigneCommande ligneCommande = getLigneCommande(id);
         ligneCommande.setId(id);
         ligneCommande.setPrixUnitaire(ligneCommandeRequest.prixUnitaire());
-        Promotion promotion = new Promotion();
-        promotion.setId(ligneCommandeRequest.promotionsId());
-        ligneCommande.setPromotion(promotion);
-        ligneCommandeRepository.save(ligneCommande);
+        ligneCommande = ligneCommandeRepository.save(ligneCommande);
+        ligneCommande = ligneCommandeRepository.findById(ligneCommande.getId()).orElseThrow(()->new RessourceNotFoundException("la ligne commande non trouve"));
         return LigneCommandeMapper.toLigneCommandeResponse(ligneCommande);
     }
 
@@ -85,6 +91,10 @@ public class LigneCommandeService {
 
     private Produit getProduit(Long id){
         return produitRepository.findById(id).orElseThrow(()->new RessourceNotFoundException("Produit n°"+id +" non trouve"));
+    }
+
+    private Promotion getPromotion(Long id){
+        return promotionRepository.findById(id).orElseThrow(()->new RessourceNotFoundException("Produit n°"+id +" non trouve"));
     }
 
 

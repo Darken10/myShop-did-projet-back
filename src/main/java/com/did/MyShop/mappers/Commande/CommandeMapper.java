@@ -6,6 +6,7 @@ import com.did.MyShop.entities.Commande.Commande;
 import com.did.MyShop.entities.Commande.LigneCommande;
 import com.did.MyShop.entities.User.User;
 import com.did.MyShop.enums.StatusCommandEnum;
+import com.did.MyShop.mappers.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class CommandeMapper {
                 commande.getStatus(),
                 payement,
                 commande.getCreateAt(),
-                ligneCommandes
+                ligneCommandes,
+                UserMapper.toUserResponse(commande.getUser())
         );
     }
 

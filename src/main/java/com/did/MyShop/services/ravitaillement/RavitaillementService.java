@@ -54,10 +54,13 @@ public class RavitaillementService {
 
     public Ravitaillement addLigneRavitaillement(Long ravitailleId, LigneRavitaillementRequest request) {
         Ravitaillement ravitaillement = getRavitaillement(ravitailleId);
+        Produit produit = getProduit(request.produitId());
+        produit.setStock((int) (produit.getStock() + request.quantite()));
+        produit = produitRepository.save(produit);
         LigneRavitaillement lg = LigneRavitaillement
                 .builder()
                 .quantite(request.quantite())
-                .produit(getProduit(request.produitId()))
+                .produit(produit)
                 .ravitaillement(ravitaillement)
                 .prixUnitaire(request.prixUnitaire())
                 .build();

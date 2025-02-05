@@ -10,11 +10,13 @@ import com.did.MyShop.entities.Commande.Client;
 import com.did.MyShop.entities.Commande.Commande;
 import com.did.MyShop.entities.Commande.LigneCommande;
 import com.did.MyShop.entities.Commande.Paiement;
+import com.did.MyShop.entities.Produit.Produit;
 import com.did.MyShop.entities.User.User;
 import com.did.MyShop.mappers.Commande.CommandeMapper;
 import com.did.MyShop.mappers.Commande.PaiementMapper;
 import com.did.MyShop.repositories.commande.ClientRepository;
 import com.did.MyShop.repositories.commande.CommandeRepository;
+import com.did.MyShop.repositories.produit.ProduitRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,7 @@ import java.util.stream.Collectors;
 public class CommandeService {
 
     private final PaiementService paiementService;
+    private final ProduitRepository produitRepository;
     CommandeRepository commandeRepository;
     LigneCommandeService ligneCommandeService;
     private final ClientRepository clientRepository;
@@ -52,11 +56,15 @@ public class CommandeService {
         commande.setCreateAt(LocalDateTime.now());
         commande.setUser(user);
         commande.setClient(getClient(commandeRequest.clientId()));
-
-        commandeRequest.ligneCommandes().forEach((lcreq)-> {
-            var lcI = ligneCommandeService.create(lcreq,commandeRepository.save(commande).getId());
-        });
+        commande.setStatus(commandeRequest.status());
         commandeRepository.save(commande);
+        commande.setLigneCommandes(new ArrayList<>());
+        commandeRequest.ligneCommandes().forEach((lcreq)-> {
+            LigneCommande lcI = ligneCommandeService.create(lcreq,commandeRepository.save(commande).getId());
+            commande.getLigneCommandes().add(lcI);
+        });
+
+
         return CommandeMapper.toCommandeResponse(commande);
     }
 
@@ -87,6 +95,9 @@ public class CommandeService {
         return clientRepository.findById(id).orElseThrow(()->new RessourceNotFoundException("Client n°"+id +" non trouve"));
     }
 
+    public Produit getProduit(Long id){
+        return produitRepository.findById(id).orElseThrow(()->new RessourceNotFoundException("Produit n°"+id +" non trouve"));
+    }
 
 
 }
