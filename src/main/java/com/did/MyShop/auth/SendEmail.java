@@ -47,4 +47,30 @@ public class SendEmail {
         System.out.println("Sending body : " + body);
         //TODO : on doit envoyer un mail contenant le lien front avec le jeton en params
     }
+
+    public void sendAlertStockEmail(String to, String link) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(to);
+        helper.setSubject("Alert Stock");
+        helper.setFrom("no-reply@myshop.com");
+        // Contenu HTML
+        String htmlContent = """
+            <html>
+            <body>
+                <h1>Réinitialisation de votre mot de passe</h1>
+                <p>Bonjour,</p>
+                <p>Vous avez demandé la réinitialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour procéder :</p>
+                <a href="%s" style="display: inline-block; padding: 10px 20px; color: white; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Réinitialiser le mot de passe</a>
+                <p>Si vous n'avez pas demandé cette action, vous pouvez ignorer ce message.</p>
+                <p>Cordialement,<br>L'équipe de support</p>
+            </body>
+            </html>
+        """.formatted(link);
+
+        helper.setText(htmlContent, true); // True pour indiquer que le contenu est en HTML
+        javaMailSender.send(mimeMessage);
+    }
+
+
 }

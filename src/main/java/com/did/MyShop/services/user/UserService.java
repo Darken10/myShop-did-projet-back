@@ -1,22 +1,29 @@
 package com.did.MyShop.services.user;
 
+import com.did.MyShop.DTO.commande.CommandeResponse;
 import com.did.MyShop.DTO.user.UserRequest;
 import com.did.MyShop.DTO.user.UserResponse;
 import com.did.MyShop.Exceptions.RessourceNotFoundException;
 import com.did.MyShop.auth.ChangePasswordRequest;
+import com.did.MyShop.entities.Commande.Commande;
 import com.did.MyShop.entities.User.User;
 import com.did.MyShop.enums.StatusUserEnum;
+import com.did.MyShop.mappers.Commande.CommandeMapper;
 import com.did.MyShop.mappers.user.UserMapper;
+import com.did.MyShop.repositories.commande.CommandeRepository;
 import com.did.MyShop.repositories.users.RoleRepository;
 import com.did.MyShop.repositories.users.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -24,6 +31,7 @@ public class UserService {
     private   final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CommandeRepository commandeRepository;
 
     private static final String password = "password";
 
@@ -89,5 +97,13 @@ public class UserService {
     public UserResponse getUser(Principal connectedUser) {
         return UserMapper.toUserResponse((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
     }
+
+
+    public List<CommandeResponse> getCommandePerCaissier(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(()->new RessourceNotFoundException("user n° "+userId+" introuvable"));
+
+        return this.commandeRepository.findAllByUser(user).stream().map(CommandeMapper::toCommandeResponse).collect(Collectors.toList());
+    }
+
 }
 

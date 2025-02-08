@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -32,7 +33,14 @@ public class PaiementService {
     @Transactional
     public Paiement save(PaiementRequest paiementRequest){
         Paiement paiement = PaiementMapper.toPaiement(paiementRequest);
-        paiement.setCommande(getCommande(paiementRequest.commandeId()));
+        Commande commande = getCommande(paiementRequest.commandeId());
+        AtomicReference<Double> amountDejaPayer = new AtomicReference<>(0D);
+        commande.getPaiements().forEach(paie -> {
+            amountDejaPayer.set(amountDejaPayer.get() + (double) paie.getAmount());
+        });
+        System.out.println("===========================================================");
+        log.info("Valeur deja payer : {}", amountDejaPayer.get());
+        paiement.setCommande(commande);
         return paiementRepository.save(paiement);
     }
 

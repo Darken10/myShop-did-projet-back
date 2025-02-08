@@ -27,11 +27,16 @@ import java.util.List;
 public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {
+            "/",
+            "/index.html",
+            "/static/**",
+            "/assets/**",
             "/v3/**",
 //            "/v3/api-docs/**",
             "/auth/**",
             "/swagger-ui/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/login"
     };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;

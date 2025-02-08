@@ -3,47 +3,40 @@ package com.did.MyShop.controllers.user;
 import com.did.MyShop.DTO.commande.CommandeResponse;
 import com.did.MyShop.DTO.user.UserRequest;
 import com.did.MyShop.DTO.user.UserResponse;
-import com.did.MyShop.auth.AuthenticationService;
-import com.did.MyShop.auth.ChangePasswordRequest;
-import com.did.MyShop.entities.User.User;
-import com.did.MyShop.mappers.user.UserMapper;
 import com.did.MyShop.services.user.UserService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
-@AllArgsConstructor
-@RequestMapping("/auth/user")
-@RestController
-public class UserController {
-    private final UserService userService;
-    private final AuthenticationService service;
 
-    @GetMapping
-    public UserResponse getConnectedUser(Principal connectedUser) {
-        return userService.getUser(connectedUser);
+@Slf4j
+@AllArgsConstructor
+@RequestMapping("/users")
+@RestController
+public class PersonnelController {
+    private final UserService userService;
+
+
+    @GetMapping("/me")
+    public UserResponse me(Principal principal){
+        return userService.getUser(principal);
     }
 
-    @GetMapping("all")
+    @GetMapping
     public List<UserResponse> index(){
         return userService.All();
     }
 
 
-
-
-
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(
-            @Valid @RequestBody UserRequest request
-    ) throws MessagingException {
-        return ResponseEntity.ok(service.register(request));
+    @PostMapping
+    public UserResponse store(
+            @Valid @RequestBody UserRequest userRequest
+    ){
+        return userService.save(userRequest);
     }
 
     @GetMapping("/{id}")
@@ -69,15 +62,11 @@ public class UserController {
         userService.delete(personnelId);
     }
 
-    @PatchMapping("/change-password")
-    public UserResponse resetPassword(
-            @Valid @RequestBody ChangePasswordRequest request,
-            Principal connectedUser
-    ) {
-        return userService.changePassword(request, connectedUser);
+
+    @GetMapping("/vente-per-user/{id}")
+    private  List<CommandeResponse> venteCaissier(@PathVariable("id") Long personnelId){
+        return userService.getCommandePerCaissier(personnelId);
+
     }
-
-
-
 
 }

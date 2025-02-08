@@ -26,7 +26,7 @@ public class AuthenticationController {
   @PostMapping("/register")
   public ResponseEntity<UserResponse> register(
       @Valid @RequestBody UserRequest request
-  ) {
+  ) throws MessagingException {
     return ResponseEntity.ok(service.register(request));
   }
   @PostMapping("/authenticate")
@@ -49,12 +49,7 @@ public class AuthenticationController {
           @RequestBody ResetPasswordCredentialRecord request
   ) throws MessagingException {
 
-    var rpj = service.createResetPasswordJeton(request);
-    Map<String,Boolean> val = new HashMap<>();
-    val.put("isActive", rpj != null && rpj.getIsActive());
-    val.put("isExpired",  rpj != null && rpj.getIsExpire() );
-
-    return val;
+    return service.resetPwd(request);
   }
 
   @GetMapping("/reset-password/{jeton}")

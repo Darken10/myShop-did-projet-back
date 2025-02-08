@@ -29,9 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +46,10 @@ public class AuthenticationService {
 
   @Value("${password}")
   private  String password ;
+  @Value("${front-reset-pwd-url}")
+  private String url;
 
-  public UserResponse register(UserRequest request) {
+  public UserResponse register(UserRequest request) throws MessagingException {
     var existingUser = repository.findUserByMatriculeOrEmailOrPhoneNumber(request.matricule(),request.email(),request.email());
     if (existingUser.isPresent()) {
       throw new RessourceNotFoundException("Un utilisateur avec cet matricule,ou cet email,ou cet numéro de Telephone existe deja");
@@ -69,6 +69,8 @@ public class AuthenticationService {
     request.rolesId()
             .forEach(roleId -> user.addRole(roleRepository.findById(roleId).orElseThrow(() -> new RessourceNotFoundException("Aucun role associer a cet identifiant"))));
     var savedUser = repository.save(user);
+    ResetPasswordCredentialRecord req = new ResetPasswordCredentialRecord(user.getEmail(),user.getMatricule(),url);
+    createResetPasswordJeton(req);
     return UserMapper.toUserResponse(savedUser);
   }
 
@@ -152,11 +154,15 @@ public class AuthenticationService {
   public ResetPasswordJeton createResetPasswordJeton(ResetPasswordCredentialRecord request) throws MessagingException {
     var per = personnelRepository.findUserByEmailAndMatricule(request.email(),request.matricule()).orElseThrow(()->new RessourceNotFoundException("user introuvable"));
    /* List<ResetPasswordJeton> resetPasswordJetons = resetPasswordJetonRepository.findAllByUser(per);*/
-    per.getResetPasswords().forEach((resetPasswordJeton) ->{
-      resetPasswordJeton.setIsExpire(true);
-      resetPasswordJeton.setIsActive(false);
-      System.out.println(resetPasswordJeton.getJeton());
-    });
+
+    if (per.getResetPasswords() != null) {
+      per.getResetPasswords().forEach((resetPasswordJeton) ->{
+        resetPasswordJeton.setIsExpire(true);
+        resetPasswordJeton.setIsActive(false);
+        System.out.println(resetPasswordJeton.getJeton());
+      });
+    }
+
 
     UUID jeton = UUID.randomUUID();
     ResetPasswordJeton resetPasswordJeton =  ResetPasswordJeton
@@ -193,6 +199,15 @@ public class AuthenticationService {
     resetPasswordJetonRepository.save(resetPwd);
 
     return UserMapper.toUserResponse(personnelRepository.save(personnel));
+  }
+
+  public Map<String,Boolean> resetPwd(ResetPasswordCredentialRecord request) throws MessagingException {
+    var rpj = createResetPasswordJeton(request);
+    Map<String,Boolean> val = new HashMap<>();
+    val.put("isActive", rpj != null && rpj.getIsActive());
+    val.put("isExpired",  rpj != null && rpj.getIsExpire() );
+
+    return val;
   }
 
 

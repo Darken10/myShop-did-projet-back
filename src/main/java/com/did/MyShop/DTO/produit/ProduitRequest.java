@@ -14,12 +14,10 @@ public record ProduitRequest(
 
         String description,
 
-        @NotBlank(message = "Le prix est obligatoire")
         @PositiveOrZero(message = "Le prix ne peut pas etre inferieur a 0")
         Double prix,
 
-        @NotBlank(message = "Le stock est obligatoire")
-                @PositiveOrZero(message = "Le stock ne peut pas etre inferieur a 0")
+        @PositiveOrZero(message = "Le stock ne peut pas etre inferieur a 0")
         Integer stock,
 
         String image,
@@ -29,7 +27,6 @@ public record ProduitRequest(
 
         UniteProduitEnum unite,
 
-        @NotBlank(message = "La categorie est obligatoire")
         Long categoryId,
 
         Set<Long> tagsId,

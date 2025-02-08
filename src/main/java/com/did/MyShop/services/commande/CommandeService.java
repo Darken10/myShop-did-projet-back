@@ -17,9 +17,11 @@ import com.did.MyShop.mappers.Commande.PaiementMapper;
 import com.did.MyShop.repositories.commande.ClientRepository;
 import com.did.MyShop.repositories.commande.CommandeRepository;
 import com.did.MyShop.repositories.produit.ProduitRepository;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +35,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CommandeService {
 
-    private final PaiementService paiementService;
     private final ProduitRepository produitRepository;
     CommandeRepository commandeRepository;
     LigneCommandeService ligneCommandeService;
@@ -60,7 +61,12 @@ public class CommandeService {
         commandeRepository.save(commande);
         commande.setLigneCommandes(new ArrayList<>());
         commandeRequest.ligneCommandes().forEach((lcreq)-> {
-            LigneCommande lcI = ligneCommandeService.create(lcreq,commandeRepository.save(commande).getId());
+            LigneCommande lcI = null;
+            try {
+                lcI = ligneCommandeService.create(lcreq,commandeRepository.save(commande).getId());
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
             commande.getLigneCommandes().add(lcI);
         });
 

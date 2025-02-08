@@ -3,7 +3,6 @@ package com.did.MyShop.entities.Produit;
 import com.did.MyShop.entities.Commande.LigneCommande;
 import com.did.MyShop.entities.Commande.Promotion;
 import com.did.MyShop.entities.Ravitaillement.LigneRavitaillement;
-import com.did.MyShop.entities.User.Role;
 import com.did.MyShop.enums.UniteProduitEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -26,6 +25,9 @@ public class Produit {
     private double prix;
     private int stock;
     private String description;
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    @Column(columnDefinition = "LONGTEXT")
     private String image;
     private Double seuil;
     private String reference;

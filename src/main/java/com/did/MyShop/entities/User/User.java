@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -18,8 +19,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Data
-@ToString
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -31,7 +32,7 @@ public class User implements UserDetails {
     private String lastName;
     private GenreUserEnum genre;
     private String email;
-    private String dateNaissance;
+    private LocalDate dateNaissance;
     private String phoneNumber;
     private String matricule;
     private String password;

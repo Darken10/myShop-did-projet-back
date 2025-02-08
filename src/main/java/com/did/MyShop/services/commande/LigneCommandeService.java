@@ -15,8 +15,11 @@ import com.did.MyShop.repositories.commande.CommandeRepository;
 import com.did.MyShop.repositories.commande.LigneCommandeRepository;
 import com.did.MyShop.repositories.commande.PromotionRepository;
 import com.did.MyShop.repositories.produit.ProduitRepository;
+import com.did.MyShop.services.NotificationService;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.did.MyShop.DTO.commande.LigneCommandeResponse;
 
@@ -29,9 +32,9 @@ public class LigneCommandeService {
 
     private final CommandeRepository commandeRepository;
     private final ProduitRepository produitRepository;
-    private final ClientRepository clientRepository;
     private final PromotionRepository promotionRepository;
     LigneCommandeRepository ligneCommandeRepository;
+    private NotificationService notificationService;
 
     public List<LigneCommandeResponse> findAll(){
         return ligneCommandeRepository.findAll().stream().map(LigneCommandeMapper::toLigneCommandeResponse).collect(Collectors.toList());
@@ -49,7 +52,7 @@ public class LigneCommandeService {
     }
 
     @Transactional
-    public LigneCommande create(LigneCommandeRequest commandeRequest,Long commandeId){
+    public LigneCommande create(LigneCommandeRequest commandeRequest,Long commandeId) throws MessagingException{
         LigneCommande ligneCommande = LigneCommandeMapper.toLigneCommande(commandeRequest);
         Produit produit = getProduit(commandeRequest.produitId());
         ligneCommande.setCommande(getCommande(commandeId));
@@ -62,6 +65,11 @@ public class LigneCommandeService {
         ligneCommandeRepository.save(ligneCommande);
         produit.setStock((int) (produit.getStock() - ligneCommande.getQuantity()));
         produitRepository.save(produit);
+
+        System.out.println(produit.getStock() + " : seuil " + produit.getSeuil() +"il faut notifier");
+        if (produit.getStock() < produit.getSeuil()){
+            notificationService.notifyManagersStockInsuffisant();
+        }
         return ligneCommande;
     }
 

@@ -3,6 +3,7 @@ package com.did.MyShop.DTO.user;
 import com.did.MyShop.enums.GenreUserEnum;
 import com.did.MyShop.enums.StatusUserEnum;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public record UserResponse(
@@ -10,7 +11,7 @@ public record UserResponse(
         String firstName,
         String lastName,
         GenreUserEnum genre,
-        String dateNaissance,
+        LocalDate dateNaissance,
         String email,
         String phoneNumber,
         String matricule,
