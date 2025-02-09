@@ -124,5 +124,39 @@ public class commandeStatistiqueController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/montant-paiement-caissier-semaine-pour-tous")
+    public ResponseEntity<Map<String, Double>> getMontantPaiementParJourSemainePourTous(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+        Map<String, Double> result = rapportService.getMontantPaiementParJourSemainePourTout(startDate);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/montant-chiffre-affaire-caissier-semaine-pour-tous")
+    public ResponseEntity<Map<String, Double>> getMontantChiffreAffaireParJourSemainePourTous(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+        Map<String, Double> result = rapportService.getChiffreAffaireParJourSemaineTous(startDate);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/user-count-status")
+    public ResponseEntity<Map<String,Double>> getUserCountByStatus() {
+        return  ResponseEntity.ok(rapportService.getCountUserByStatus());
+    }
+
+    @GetMapping("/user-count")
+    public ResponseEntity<Map<String,Double>> getUserCount() {
+        return  ResponseEntity.ok(rapportService.getCountUser());
+    }
+
+    @GetMapping("/count-produit-categories-tags")
+    public ResponseEntity<Map<String,Double>> getProduitCategoriesTags() {
+        return  ResponseEntity.ok(rapportService.getCountProduitsCategoriesTags());
+    }
+
+    @GetMapping("/count-stock-statut")
+    public ResponseEntity<Map<String,Double>> getStockStatut() {
+        return  ResponseEntity.ok(rapportService.getProduitCountStatistique());
+    }
+
 
 }

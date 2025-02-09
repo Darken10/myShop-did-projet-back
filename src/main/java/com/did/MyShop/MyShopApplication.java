@@ -23,7 +23,7 @@ public class MyShopApplication {
 			RoleRepository roleRepository
 	) {
 		return args -> {
-			Role role = new Role();
+			/*Role role = new Role();
 			role.setId(1L);
 			role.setLibelle("Admin");
 			roleRepository.save(role);
@@ -36,7 +36,7 @@ public class MyShopApplication {
 			Role role2 = new Role();
 			role.setId(3L);
 			role2.setLibelle("Gestionnaire");
-			roleRepository.save(role2);
+			roleRepository.save(role2);*/
 
 		};
 	}

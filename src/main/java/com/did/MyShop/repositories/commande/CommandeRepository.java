@@ -9,9 +9,13 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 public interface CommandeRepository extends JpaRepository<Commande, Long> {
+
+    @Query("SELECT c FROM Commande c order by c.createAt DESC ")
+    List<Commande> findAllInverse();
 
     @Query("SELECT lc.produit.id, SUM(lc.prixUnitaire * lc.quantity) " +
             "FROM LigneCommande lc " +
@@ -70,5 +74,13 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
                                                     @Param("startDate") LocalDateTime startDate,
                                                     @Param("endDate") LocalDateTime endDate);
 
+    @Query("SELECT DATE(c.createAt) AS jour, SUM(lc.prixUnitaire * lc.quantity) AS chiffreAffaire " +
+            "FROM LigneCommande lc " +
+            "JOIN lc.commande c " +
+            "WHERE c.createAt BETWEEN :startDate AND :endDate " +
+            "GROUP BY DATE(c.createAt) " +
+            "ORDER BY DATE(c.createAt)")
+    List<Object[]> findChiffreAffaireParJourSemainePourTous(@Param("startDate") LocalDateTime startDate,
+                                                            @Param("endDate") LocalDateTime endDate);
 
 }

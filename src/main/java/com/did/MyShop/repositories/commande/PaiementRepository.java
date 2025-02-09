@@ -32,6 +32,15 @@ public interface PaiementRepository extends JpaRepository<Paiement, Long> {
                                                      @Param("startDate") LocalDateTime startDate,
                                                      @Param("endDate") LocalDateTime endDate);
 
+    @Query("SELECT FUNCTION('DATE', p.date) AS jour, SUM(p.amount) AS totalPaiement " +
+            "FROM Paiement p " +
+            "JOIN p.commande c " +
+            "WHERE p.date BETWEEN :startDate AND :endDate " +
+            "GROUP BY FUNCTION('DATE', p.date) " +
+            "ORDER BY FUNCTION('DATE', p.date) ASC")
+    List<Object[]> findMontantPaiementParJourSemainePourTous(@Param("startDate") LocalDateTime startDate,
+                                                             @Param("endDate") LocalDateTime endDate);
+
 
     List<Paiement> findPaiementsByCommande(Commande commande);
 }

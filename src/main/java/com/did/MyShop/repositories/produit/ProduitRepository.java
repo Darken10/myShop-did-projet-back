@@ -21,4 +21,13 @@ public interface ProduitRepository extends JpaRepository<Produit,Long> {
     // Récupère tous les produits dont le stock est inférieur au seuil d'alerte
     @Query("SELECT p FROM Produit p WHERE p.stock < p.seuil")
     List<Produit> findProduitsEnCarence();
+
+    @Query("SELECT p FROM Produit p WHERE p.stock <= 0")
+    List<Produit> countProduitNoStock();
+
+    @Query("SELECT p FROM Produit p WHERE p.stock >= p.seuil")
+    List<Produit> countProduitStock();
+
+
+
 }

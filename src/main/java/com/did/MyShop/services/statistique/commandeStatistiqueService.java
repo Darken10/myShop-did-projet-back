@@ -2,15 +2,21 @@ package com.did.MyShop.services.statistique;
 
 import com.did.MyShop.DTO.statistique.CommandeStatistique;
 import com.did.MyShop.DTO.statistique.VenteParJourDTO;
+import com.did.MyShop.Exceptions.RessourceNotFoundException;
 import com.did.MyShop.entities.Commande.Commande;
 import com.did.MyShop.entities.Commande.Paiement;
 import com.did.MyShop.entities.Produit.Produit;
 import com.did.MyShop.enums.MethodePaiementEnum;
+import com.did.MyShop.enums.StatusUserEnum;
 import com.did.MyShop.repositories.commande.CommandeRepository;
 import com.did.MyShop.repositories.commande.LigneCommandeRepository;
 import com.did.MyShop.repositories.commande.PaiementRepository;
 import com.did.MyShop.repositories.commande.PromotionRepository;
+import com.did.MyShop.repositories.produit.CategorieRepository;
 import com.did.MyShop.repositories.produit.ProduitRepository;
+import com.did.MyShop.repositories.produit.TagRepository;
+import com.did.MyShop.repositories.users.RoleRepository;
+import com.did.MyShop.repositories.users.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +33,10 @@ public class commandeStatistiqueService {
 
     private final CommandeRepository commandeRepository;
     private final LigneCommandeRepository ligneCommandeRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final CategorieRepository categorieRepository;
+    private final TagRepository tagRepository;
     private ProduitRepository produitRepository;
     private PaiementRepository paiementRepository;
     private PromotionRepository promotionRepository;
@@ -172,6 +182,39 @@ public class commandeStatistiqueService {
     }
 
 
+
+    public Map<String, Double> getChiffreAffaireParJourSemaineTous(LocalDate startDate) {
+        // Définir la borne de début : début de la journée
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        // Fin de la semaine : startDate + 6 jours à 23:59:59.999...
+        LocalDateTime endDateTime = startDate.plusDays(6).atTime(LocalTime.MAX);
+
+        List<Object[]> results = commandeRepository.findChiffreAffaireParJourSemainePourTous(startDateTime, endDateTime);
+        Map<String, Double> chiffreAffaireParJour = new LinkedHashMap<>();
+
+        // Pour obtenir le nom du jour, on formate la date (en fonction de la locale)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE");
+
+        for (Object[] row : results) {
+            // row[0] correspond à la date (jour)
+            LocalDate date;
+            if (row[0] instanceof LocalDate) {
+                date = (LocalDate) row[0];
+            } else if (row[0] instanceof java.sql.Date) {
+                date = ((java.sql.Date) row[0]).toLocalDate();
+            } else {
+                date = LocalDate.parse(row[0].toString());
+            }
+            // row[1] correspond au chiffre d'affaires de ce jour
+            Double chiffreAffaire = (Double) row[1];
+
+            String dayName = date.format(formatter);
+            chiffreAffaireParJour.put(dayName, chiffreAffaire);
+        }
+        return chiffreAffaireParJour;
+    }
+
+
     /**
      * Retourne le montant total des paiements par jour pour une semaine donnée pour un caissier.
      *
@@ -209,6 +252,71 @@ public class commandeStatistiqueService {
 
         return montantPaiementParJour;
     }
+
+    public Map<String, Double> getMontantPaiementParJourSemainePourTout( LocalDate startDate) {
+        // Début de la semaine (début de journée)
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        // Fin de la semaine : startDate + 6 jours, fin de journée
+        LocalDateTime endDateTime = startDate.plusDays(6).atTime(LocalTime.MAX);
+
+        // Exécute la requête dans le repository
+        List<Object[]> results = paiementRepository.findMontantPaiementParJourSemainePourTous(startDateTime, endDateTime);
+
+        // Map pour stocker les résultats (on utilise LinkedHashMap pour préserver l'ordre)
+        Map<String, Double> montantPaiementParJour = new LinkedHashMap<>();
+        // Formatter pour obtenir le nom du jour (ex: "lundi", "mardi", etc.)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE");
+
+        for (Object[] row : results) {
+            LocalDate date;
+            if (row[0] instanceof LocalDate) {
+                date = (LocalDate) row[0];
+            } else if (row[0] instanceof java.sql.Date) {
+                date = ((java.sql.Date) row[0]).toLocalDate();
+            } else {
+                date = LocalDate.parse(row[0].toString());
+            }
+            Double montant = (Double) row[1];
+            String dayName = date.format(formatter);
+            montantPaiementParJour.put(dayName, montant);
+        }
+
+        return montantPaiementParJour;
+    }
+
+
+    public Map<String, Double> getCountUser() {
+        Map<String, Double> result = new LinkedHashMap<>();
+        result.put("caissier",userRepository.countByRolesContaining(roleRepository.findById(2L).orElseThrow(()->new RessourceNotFoundException("Role 2 not found"))));
+        result.put("gestionnaire",userRepository.countByRolesContaining(roleRepository.findById(3L).orElseThrow(()->new RessourceNotFoundException("Role 3 not found"))));
+        result.put("admin",userRepository.countByRolesContaining(roleRepository.findById(1L).orElseThrow(()->new RessourceNotFoundException("Role 1 not found"))));
+        return result;
+    }
+
+    public Map<String, Double> getCountUserByStatus() {
+        Map<String, Double> result = new LinkedHashMap<>();
+        result.put("active",userRepository.countByStatus(StatusUserEnum.ACTIVE));
+        result.put("en_attente",userRepository.countByStatus(StatusUserEnum.EN_ATTENTE));
+        result.put("inactive",userRepository.countByStatus(StatusUserEnum.INACTIVE));
+        return result;
+    }
+
+    public Map<String, Double> getProduitCountStatistique() {
+        Map<String, Double> result = new LinkedHashMap<>();
+        result.put("en_stock", (double) produitRepository.countProduitStock().size());
+        result.put("fini", (double) produitRepository.countProduitNoStock().size());
+        result.put("carence",(double) produitRepository.findProduitsEnCarence().size());
+        return result;
+    }
+
+    public Map<String, Double> getCountProduitsCategoriesTags() {
+        Map<String, Double> result = new LinkedHashMap<>();
+        result.put("produit", (double) produitRepository.findAll().size());
+        result.put("categories", (double) categorieRepository.findAll().size());
+        result.put("tags",(double) tagRepository.findAll().size());
+        return result;
+    }
+
 }
 
 

@@ -9,13 +9,13 @@ id = 'ebbbd8f8-0d4f-488c-bd21-d81aa4fd3442'
 type = 'JSON'
 raw = '''
 {
-  "firstName": "Darken",
-  "lastName": "Darken",
+  "firstName": "Admin",
+  "lastName": "Admin",
   "genre": "MALE",
-  "email": "test@test.com",
+  "email": "admin@admin.com",
   "phoneNumber": "12345678",
   "matricule": "123456A",
-  "status": "EN_ATTENTE",
-  "rolesId": [1,2]
+  "status": "ACTIVE",
+  "rolesId": [1,2,3]
 }'''
 ```

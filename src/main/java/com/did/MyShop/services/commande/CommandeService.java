@@ -12,11 +12,14 @@ import com.did.MyShop.entities.Commande.LigneCommande;
 import com.did.MyShop.entities.Commande.Paiement;
 import com.did.MyShop.entities.Produit.Produit;
 import com.did.MyShop.entities.User.User;
+import com.did.MyShop.enums.StatusUserEnum;
 import com.did.MyShop.mappers.Commande.CommandeMapper;
 import com.did.MyShop.mappers.Commande.PaiementMapper;
 import com.did.MyShop.repositories.commande.ClientRepository;
 import com.did.MyShop.repositories.commande.CommandeRepository;
 import com.did.MyShop.repositories.produit.ProduitRepository;
+import com.did.MyShop.repositories.users.UserRepository;
+import com.did.MyShop.services.user.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -36,13 +39,17 @@ import java.util.stream.Collectors;
 public class CommandeService {
 
     private final ProduitRepository produitRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
+    private final com.did.MyShop.services.statistique.commandeStatistiqueService commandeStatistiqueService;
     CommandeRepository commandeRepository;
     LigneCommandeService ligneCommandeService;
     private final ClientRepository clientRepository;
 
 
     public List<CommandeResponse> findAll(){
-        return commandeRepository.findAll().stream().map(CommandeMapper::toCommandeResponse).collect(Collectors.toList());
+        System.out.println(commandeStatistiqueService.getCountUser());
+        return commandeRepository.findAllInverse().stream().map(CommandeMapper::toCommandeResponse).collect(Collectors.toList());
     }
 
     public CommandeResponse findById(Long id){
