@@ -44,6 +44,9 @@ public class AuthenticationService {
   private final ResetPasswordJetonRepository resetPasswordJetonRepository;
   private final SendEmail sendEmail;
 
+
+  private final Set<String> blacklistedTokens = new HashSet<>();
+
   @Value("${password}")
   private  String password ;
   @Value("${front-reset-pwd-url}")
@@ -208,6 +211,15 @@ public class AuthenticationService {
     val.put("isExpired",  rpj != null && rpj.getIsExpire() );
 
     return val;
+  }
+
+
+  public void blacklistToken(String token) {
+    blacklistedTokens.add(token);
+  }
+
+  public boolean isTokenBlacklisted(String token) {
+    return blacklistedTokens.contains(token);
   }
 
 

@@ -71,4 +71,18 @@ public class AuthenticationController {
   }
 
 
+
+  @PostMapping("/logout")
+  public ResponseEntity<Map<String,String>> logout(@RequestHeader("Authorization") String token) {
+    if (token.startsWith("Bearer ")) {
+      token = token.substring(7);
+    }
+    Map<String,String> map = new HashMap<>();
+    map.put("status", "success");
+    map.put("message" ,"Déconnexion réussie, token invalide !");
+    service.blacklistToken(token);
+    return ResponseEntity.ok(map);
+  }
+
+
 }
